@@ -72,7 +72,7 @@ namespace MiniBlogi.Controllers
 
             if (ModelState.IsValid)
             {
-                _blogPostRepository.Update(blogPost);
+                _blogPostRepository.UpdateAsync(blogPost);
                 await _blogPostRepository.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -94,7 +94,7 @@ namespace MiniBlogi.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            _blogPostRepository.Delete(id);
+            _blogPostRepository.DeleteAsync(id);
             await _blogPostRepository.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

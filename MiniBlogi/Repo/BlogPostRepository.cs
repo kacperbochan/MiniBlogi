@@ -2,67 +2,54 @@
 using MiniBlogi.Controllers.Interfaces;
 using MiniBlogi.Data;
 using MiniBlogi.Models;
+using MiniBlogi.Repo;
 
 namespace MiniBlogi.Controllers
 {
     public class BlogPostRepository : IBlogPostRepository
     {
-        private readonly BlogDbContext _context;
+        private readonly UnitOfWork _unitOfWork;
 
-        public BlogPostRepository(BlogDbContext context)
+        public BlogPostRepository(UnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<IEnumerable<BlogPost>> GetAllAsync()
         {
-            return await _context.BlogPosts.ToListAsync();
+            return await _unitOfWork.Context.BlogPosts.ToListAsync();
         }
 
         public async Task<BlogPost> GetByIdAsync(int id)
         {
-            return await _context.BlogPosts.FindAsync(id);
+            return await _unitOfWork.Context.BlogPosts.FindAsync(id);
         }
 
         public async Task AddAsync(BlogPost blogPost)
         {
-            await _context.BlogPosts.AddAsync(blogPost);
+            await _unitOfWork.Context.BlogPosts.AddAsync(blogPost);
         }
 
-        public void Update(BlogPost blogPost)
+        public async Task UpdateAsync(BlogPost blogPost)
         {
-            _context.BlogPosts.Update(blogPost);
+            _unitOfWork.Context.Entry(blogPost).State = EntityState.Modified;
+            await Task.CompletedTask;
         }
 
-        public IEnumerable<BlogPost> GetAll()
+        public async Task DeleteAsync(int id)
         {
-            return _context.BlogPosts;
-        }
-
-        public BlogPost GetById(int id)
-        {
-            return _context.BlogPosts.FirstOrDefault(p => p.Id == id);
-        }
-
-        public void Add(BlogPost post)
-        {
-            _context.BlogPosts.Add(post);
-        }
-
-        public void Delete(int id)
-        {
-            var post = GetById(id);
+            var post = await GetByIdAsync(id);
             if (post != null)
             {
                 // Usuwamy post
-                _context.BlogPosts.Remove(post);
+                _unitOfWork.Context.BlogPosts.Remove(post);
 
                 // Usuwamy powiązane obiekty (tagi, obrazy, komentarze), jeśli nie są powiązane z innymi postami
                 foreach (var tag in post.Tags)
                 {
                     if (tag.BlogPosts.Count == 1) // Jeśli tag jest powiązany tylko z tym postem
                     {
-                        _context.Tags.Remove(tag);
+                        _unitOfWork.Context.Tags.Remove(tag);
                     }
                 }
 
@@ -70,23 +57,18 @@ namespace MiniBlogi.Controllers
                 {
                     if (image.BlogPosts.Count == 1) // Jeśli obraz jest powiązany tylko z tym postem
                     {
-                        _context.Images.Remove(image);
+                        _unitOfWork.Context.Images.Remove(image);
                     }
                 }
 
                 // Komentarze zawsze są powiązane z jednym postem, więc możemy je bezpiecznie usunąć
-                _context.Comments.RemoveRange(post.Comments);
+                _unitOfWork.Context.Comments.RemoveRange(post.Comments);
             }
         }
 
         public async Task SaveChangesAsync()
         {
-            await _context.SaveChangesAsync();
-        }
-
-        public void Save()
-        {
-            _context.SaveChanges();
+            await _unitOfWork.Context.SaveChangesAsync();
         }
     }
 
