@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MiniBlogi.Data;
 
@@ -11,9 +12,10 @@ using MiniBlogi.Data;
 namespace MiniBlogi.Data.Migrations
 {
     [DbContext(typeof(BlogDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230614174924_User")]
+    partial class User
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +23,21 @@ namespace MiniBlogi.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("BlogPostImage", b =>
+                {
+                    b.Property<int>("BlogPostsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ImagesId")
+                        .HasColumnType("int");
+
+                    b.HasKey("BlogPostsId", "ImagesId");
+
+                    b.HasIndex("ImagesId");
+
+                    b.ToTable("BlogPostImage");
+                });
 
             modelBuilder.Entity("BlogPostTag", b =>
                 {
@@ -309,9 +326,6 @@ namespace MiniBlogi.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("BlogPostId")
-                        .HasColumnType("int");
-
                     b.Property<string>("FileFormat")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -325,8 +339,6 @@ namespace MiniBlogi.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BlogPostId");
 
                     b.ToTable("Images");
                 });
@@ -347,6 +359,21 @@ namespace MiniBlogi.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Tags");
+                });
+
+            modelBuilder.Entity("BlogPostImage", b =>
+                {
+                    b.HasOne("MiniBlogi.Models.BlogPost", null)
+                        .WithMany()
+                        .HasForeignKey("BlogPostsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MiniBlogi.Models.Image", null)
+                        .WithMany()
+                        .HasForeignKey("ImagesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("BlogPostTag", b =>
@@ -427,7 +454,7 @@ namespace MiniBlogi.Data.Migrations
             modelBuilder.Entity("MiniBlogi.Models.Comment", b =>
                 {
                     b.HasOne("MiniBlogi.Models.BlogPost", "BlogPost")
-                        .WithMany()
+                        .WithMany("Comments")
                         .HasForeignKey("BlogPostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -441,17 +468,6 @@ namespace MiniBlogi.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("MiniBlogi.Models.Image", b =>
-                {
-                    b.HasOne("MiniBlogi.Models.BlogPost", "BlogPost")
-                        .WithMany("Images")
-                        .HasForeignKey("BlogPostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("BlogPost");
-                });
-
             modelBuilder.Entity("MiniBlogi.Models.ApplicationUser", b =>
                 {
                     b.Navigation("Posts");
@@ -459,7 +475,7 @@ namespace MiniBlogi.Data.Migrations
 
             modelBuilder.Entity("MiniBlogi.Models.BlogPost", b =>
                 {
-                    b.Navigation("Images");
+                    b.Navigation("Comments");
                 });
 #pragma warning restore 612, 618
         }

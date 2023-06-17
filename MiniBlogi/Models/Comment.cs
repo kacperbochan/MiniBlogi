@@ -13,5 +13,6 @@ namespace MiniBlogi.Models
         public string IPAddress { get; set; }
         public ApplicationUser User { get; set; }
         public BlogPost BlogPost { get; set; }
+        public int BlogPostId { get; set; }
     }
 }

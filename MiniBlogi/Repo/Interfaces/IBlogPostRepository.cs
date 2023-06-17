@@ -9,7 +9,7 @@ namespace MiniBlogi.Controllers.Interfaces
         Task AddAsync(BlogPost blogPost);
         Task UpdateAsync(BlogPost blogPost);
         Task DeleteAsync(int id);
-        Task SaveChangesAsync();
+        Task SaveAsync();
     }
 
 }
