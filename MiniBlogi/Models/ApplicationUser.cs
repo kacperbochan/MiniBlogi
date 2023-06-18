@@ -4,6 +4,6 @@ namespace MiniBlogi.Models
 {
     public class ApplicationUser : IdentityUser
     {
-        public ICollection<BlogPost> Posts { get; set; }
+        public ICollection<BlogPost>? Posts { get; set; } = new List<BlogPost>();
     }
 }

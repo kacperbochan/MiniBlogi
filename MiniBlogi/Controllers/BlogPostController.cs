@@ -19,7 +19,7 @@ namespace MiniBlogi.Controllers
         // GET: /BlogPost/
         public async Task<IActionResult> Index()
         {
-            return View(await _blogPostRepository.GetAllAsync());
+            return Ok(await _blogPostRepository.GetAllAsync());
         }
 
         // GET: /BlogPost/Details/5
@@ -36,7 +36,7 @@ namespace MiniBlogi.Controllers
                 return NotFound();
             }
 
-            return View(blogPost);
+            return Ok(blogPost);
         }
 
         // POST: /BlogPost/Create
@@ -50,7 +50,7 @@ namespace MiniBlogi.Controllers
                 await _blogPostRepository.SaveAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(blogPost);
+            return Ok(blogPost);
         }
 
         // POST: /BlogPost/Edit/5
@@ -69,7 +69,7 @@ namespace MiniBlogi.Controllers
                 await _blogPostRepository.SaveAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(blogPost);
+            return Ok(blogPost);
         }
 
         // POST: /BlogPost/Delete/5

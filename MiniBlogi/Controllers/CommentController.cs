@@ -16,7 +16,7 @@ namespace MiniBlogi.Controllers
         // GET: /Comment/
         public async Task<IActionResult> Index()
         {
-            return View(await _commentRepository.GetAllAsync());
+            return Ok(await _commentRepository.GetAllAsync());
         }
 
         // GET: /Comment/Details/5
@@ -33,7 +33,7 @@ namespace MiniBlogi.Controllers
                 return NotFound();
             }
 
-            return View(comment);
+            return Ok(comment);
         }
 
         // POST: /Comment/Create
@@ -47,7 +47,7 @@ namespace MiniBlogi.Controllers
                 await _commentRepository.SaveAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(comment);
+            return Ok(comment);
         }
 
         // POST: /Comment/Edit/5
@@ -66,7 +66,7 @@ namespace MiniBlogi.Controllers
                 await _commentRepository.SaveAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(comment);
+            return Ok(comment);
         }
 
         // POST: /Comment/Delete/5
