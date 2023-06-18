@@ -11,6 +11,8 @@ namespace MiniBlogi.Repo
         private readonly BlogDbContext _context;
         private IBlogPostRepository _blogPostRepository;
         private ICommentRepository _commentRepository;
+        private ITagRepository _tagRepository;
+        private IImageRepository _imageRepository;
 
         public UnitOfWork(BlogDbContext context)
         {
@@ -40,6 +42,32 @@ namespace MiniBlogi.Repo
                 }
 
                 return _commentRepository;
+            }
+        }
+
+        public ITagRepository TagRepository
+        {
+            get
+            {
+                if (_tagRepository == null)
+                {
+                    _tagRepository = new TagRepository(_context);
+                }
+
+                return _tagRepository;
+            }
+        }
+
+        public IImageRepository ImageRepository
+        {
+            get
+            {
+                if (_imageRepository == null)
+                {
+                    _imageRepository = new ImageRepository(_context);
+                }
+
+                return _imageRepository;
             }
         }
 

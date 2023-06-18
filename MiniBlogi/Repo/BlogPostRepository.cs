@@ -10,7 +10,7 @@ namespace MiniBlogi.Controllers
     {
         public BlogPostRepository(BlogDbContext context) : base(context) { }
 
-        public async Task DeleteAsync(int id)
+        public new async Task DeleteAsync(int id)
         {
             var post = await GetByIdAsync(id);
             if (post != null)

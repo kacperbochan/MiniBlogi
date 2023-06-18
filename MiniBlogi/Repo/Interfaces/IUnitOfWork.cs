@@ -6,6 +6,8 @@ namespace MiniBlogi.Repo.Interfaces
     {
         IBlogPostRepository BlogPostRepository { get; }
         ICommentRepository CommentRepository { get; }
+        ITagRepository TagRepository { get; }
+        IImageRepository ImageRepository { get; }
         void Save();
     }
 
