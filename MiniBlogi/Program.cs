@@ -1,6 +1,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MiniBlogi.Controllers.Interfaces;
+using MiniBlogi.Controllers;
 using MiniBlogi.Data;
+using MiniBlogi.Repo.Interfaces;
+using MiniBlogi.Repo;
+using MiniBlogi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,9 +15,13 @@ builder.Services.AddDbContext<BlogDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<BlogDbContext>();
+
+builder.Services.AddControllers(); // Add this line to add MVC Controllers
 builder.Services.AddRazorPages();
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 var app = builder.Build();
 
@@ -36,6 +45,12 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapRazorPages();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=BlogPost}/{action=Index}/{id?}");
+    endpoints.MapRazorPages();
+});
 
 app.Run();

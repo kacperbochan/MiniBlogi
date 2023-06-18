@@ -1,0 +1,108 @@
+﻿@page
+@model MiniBlogi.Pages.Blog.CreateModel
+@{
+}
+
+<h2>Create a new Blog Post</h2>
+
+<form method="post" enctype="multipart/form-data">
+    <div>
+        <label for="Title">Title:</label>
+        <input asp-for="BlogPostMini.Title" />
+        <span asp-validation-for="BlogPostMini.Title"></span>
+    </div>
+
+    <div class="form-group">
+        <label>Tags</label>
+        <input id="tag-input" type="text" class="form-control" />
+        <button id="add-tag" type="button">Dodaj</button>
+        <div id="tag-list">
+        </div>
+        <input type="hidden" asp-for="BlogPostMini.Tags" id="hidden-tags" />
+    </div>
+
+
+    <div>
+        <label for="Description">Description:</label>
+        <textarea asp-for="BlogPostMini.Description"></textarea>
+        <span asp-validation-for="BlogPostMini.Description"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="addedImages">Images:</label>
+        <input type="file" id="addedImages" name="addedImages" accept="image/*" multiple />
+    </div>
+    <div id="image-list"></div>
+
+
+    <div>
+        <input type="submit" value="Create" />
+    </div>
+</form>
+@section Scripts {
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var tags = [];
+            $("#add-tag").click(function () {
+                var tag = $("#tag-input").val();
+                $("#tag-input").val('');
+                if (tag.length > 0 && tag.length < 50 && !tags.includes(tag)) {
+                    tags.push(tag);
+                    refreshTagList();
+                }
+            });
+
+            function refreshTagList() {
+                var $tagList = $("#tag-list");
+                $tagList.empty();
+                $.each(tags, function (i, e) {
+                    $tagList.append('<div>' + e + ' <a href="#" class="remove-tag" data-tag="' + e + '">X</a></div>');
+                });
+                $("#hidden-tags").val(tags.join(','));
+            }
+
+            $(document).on('click', '.remove-tag', function (e) {
+                e.preventDefault();
+                var tagToRemove = $(this).data('tag');
+                tags = $.grep(tags, function (tag) {
+                    return tag != tagToRemove;
+                });
+                refreshTagList();
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            var images = [];
+            $("#addedImages").change(function () {
+                $.each(this.files, function (i, file) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        images.push({ name: file.name, data: e.target.result });
+                        refreshImageList();
+                    };
+                    reader.readAsDataURL(file);
+                });
+            });
+
+            function refreshImageList() {
+                var $imageList = $("#image-list");
+                $imageList.empty();
+                $.each(images, function (i, e) {
+                    $imageList.append('<div><img src="' + e.data + '" width="50" height="50" /><a href="#" class="remove-image" data-name="' + e.name + '">X</a></div>');
+                });
+            }
+
+            $(document).on('click', '.remove-image', function (e) {
+                e.preventDefault();
+                var imageToRemove = $(this).data('name');
+                images = $.grep(images, function (image) {
+                    return image.name != imageToRemove;
+                });
+                refreshImageList();
+            });
+        });
+    </script>
+
+}
