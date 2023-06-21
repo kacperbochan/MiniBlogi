@@ -11,6 +11,11 @@ namespace MiniBlogi.Repo
         public CommentRepository(BlogDbContext context) : base(context)
         {
         }
+
+        public async Task<List<Comment>> GetAllOfBlog(int blogId)
+        {
+            return _context.Comments.Where(x => x.BlogPostId == blogId).ToList();
+        }
     }
 
 }

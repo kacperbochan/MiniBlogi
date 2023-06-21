@@ -20,6 +20,12 @@ namespace MiniBlogi.Repo
                 x.FileName == x.FileName).FirstOrDefaultAsync();
         }
 
+        public Task<Image?> GetByDataAsync(string name)
+        {
+            return DbSet.Where(x =>
+                x.FileName == name).FirstOrDefaultAsync();
+        }
+
         public bool IsImageWithData(Image image)
         {
             return DbSet.Any(x =>

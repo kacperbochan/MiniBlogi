@@ -9,7 +9,7 @@ using MiniBlogi.Repo.Interfaces;
 
 namespace MiniBlogi.Pages.Blog
 {
-    public class IndexModel : PageModel
+    public class UserBlogsModel : PageModel
     {
 
 
@@ -20,7 +20,7 @@ namespace MiniBlogi.Pages.Blog
         private readonly IUnitOfWork _unitOfWork;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public IndexModel(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager)
+        public UserBlogsModel(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager)
         {
             _unitOfWork = unitOfWork;
             _userManager = userManager;
@@ -28,38 +28,27 @@ namespace MiniBlogi.Pages.Blog
 
         public IEnumerable<BlogPost> BlogPosts { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(string username="", int currentPage = 1)
+        public async Task<IActionResult> OnGetAsync(string username, int currentPage = 1)
         {
-            var user = await _userManager.FindByNameAsync(username+"@gmail.com");
+            var user = await _userManager.FindByNameAsync(username);
 
-            if (user == null)
+            if (user != null)
             {
-
                 if (await _unitOfWork.BlogPostRepository.IsBlogNotNull())
                 {
                     PageAmount = await _unitOfWork.BlogPostRepository.GetPageAmount();
 
                     CurrentPage = (currentPage > PageAmount) ? PageAmount : currentPage;
 
-                    BlogPosts = await _unitOfWork.BlogPostRepository.GetCurrentPage(currentPage);
-
-
-                }
-                return Page();
-            }
-            else{
-                if (await _unitOfWork.BlogPostRepository.IsBlogNotNull())
-                {
-                    PageAmount = await _unitOfWork.BlogPostRepository.GetUserPageAmount(user.Id);
-
-                    CurrentPage = (currentPage > PageAmount) ? PageAmount : currentPage;
-
-                    BlogPosts = await _unitOfWork.BlogPostRepository.GetCurrentPageOfUser(currentPage, user.Id);
+                    BlogPosts = await _unitOfWork.BlogPostRepository.GetCurrentPageOfUser(currentPage, username);
 
                     return Page();
                 }
+
             }
-            return Page();
+
+            return RedirectToPage("./Index");
         }
+
     }
 }

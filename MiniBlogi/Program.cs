@@ -16,6 +16,7 @@ builder.Services.AddDbContext<BlogDbContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<BlogDbContext>();
 
 builder.Services.AddControllers(); // Add this line to add MVC Controllers

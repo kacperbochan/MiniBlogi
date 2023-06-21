@@ -21,6 +21,11 @@ namespace MiniBlogi.Repo
         {
             return DbSet.Any(x => x.Name == name);
         }
+
+        public int Count(int id)
+        {
+            return DbSet.Where(x => x.Id == id).Include(x => x.BlogPosts).FirstOrDefaultAsync().Result.BlogPosts.Count;
+        }
     }
 
 }

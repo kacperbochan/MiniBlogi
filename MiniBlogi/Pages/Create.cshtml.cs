@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -8,6 +9,7 @@ using MiniBlogi.Repo.Interfaces;
 
 namespace MiniBlogi.Pages.Blog
 {
+    [Authorize]
     public class CreateModel : PageModel
     {
         private readonly IWebHostEnvironment _environment;

@@ -1,0 +1,76 @@
+﻿@page
+@using System.IO
+@using Microsoft.AspNetCore.Identity
+@using MiniBlogi.Models;
+@inject UserManager<ApplicationUser> UserManager
+@model MiniBlogi.Pages.Blog.DetailsModel
+@{
+}
+<div>
+    <div>
+        <label for="Title">Title:</label>
+        @Model.BlogPostMini.Title
+    </div>
+
+    <div>
+        <div id="tag-list">
+            @foreach (var x in Model.BlogPostMini.Tags)
+            {
+                <div class="d-inline-block bg-info text-white px-2 py-1 rounded">#@x</div>
+            }
+        </div>
+
+    </div>
+
+
+    <div>
+        <label for="Description">Description:</label>
+        <div>@Model.BlogPostMini.Description"</div>
+    </div>
+
+    <div>
+        <label for="addedImages">Images:</label>
+        @foreach (var imagePath in Model.BlogPostMini.Images)
+        {
+            <div><img src="/@Url.Content(imagePath.Replace("\\", "/"))" width="50" height="50" /></div>
+        }
+    </div>
+
+    <div>
+        @if (UserManager.GetUserId(User) != null)
+        {
+            <form method="post">
+                <div>
+                    <label for="Comment">Komentarz:</label>
+                    <input asp-for="newComment" />
+                </div>
+                <div>
+                    <input type="submit" value="Create" />
+                </div>
+            </form>
+        }
+        @foreach (var comment in Model.Comments)
+        {
+            <div>
+                <hr>
+                <div>
+                    <p>@comment.Content</p>
+                    <small>@comment.DatePosted.ToString() from @comment.IPAddress</small>
+                </div>
+                @{
+                    var user = await UserManager.GetUserAsync(User);
+
+                    if (UserManager.GetUserId(User) == Model.BlogPostMini.UserId || UserManager.GetUserId(User) == comment.UserId || await UserManager.IsInRoleAsync(user, "Admin"))
+                    {
+                        <form method="post" asp-page-handler="Delete" asp-route-commentId="@comment.Id">
+                            <input type="submit" value="Usuń">
+                        </form>
+                    }
+                }
+            </div>
+        }
+        
+    </div>
+
+</div>
+    

@@ -5,6 +5,8 @@ namespace MiniBlogi.Pages.Models
 {
     public class BlogPostMini
     {
+        public int Id { get; set; }
+
         [Required]
         [StringLength(100)]
         [MinLength(1)]
@@ -17,8 +19,8 @@ namespace MiniBlogi.Pages.Models
 
         public string? Tags { get; set; } = string.Empty;
 
-        public List<string>? ImagePath { get; set; } = new List<string>();
+        public string? UserId { get; set; } = "";
+
+        public ICollection<string?>? Images { get; set; } = new List<string?>();
     }
-
-
 }

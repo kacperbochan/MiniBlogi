@@ -1,0 +1,14 @@
+﻿@page "{username?}"
+@using Microsoft.AspNetCore.Identity
+@using MiniBlogi.Models;
+@inject UserManager<ApplicationUser> AdminAddManager
+@model MiniBlogi.Pages.Blog.AdminAddModel
+@{
+}
+@if (Model.Dodano)
+{
+    <div>Dodano @Model.UserName do Amin</div>
+}
+else{
+    <div>@Model.UserName jest już w Amin</div>
+}

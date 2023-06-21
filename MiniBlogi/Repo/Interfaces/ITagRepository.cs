@@ -11,6 +11,7 @@ namespace MiniBlogi.Repo.Interfaces
         Task AddAsync(Tag blogPost);
         Task UpdateAsync(Tag blogPost);
         Task DeleteAsync(int id);
+        int Count(int id);
         Task SaveAsync();
     }
 }

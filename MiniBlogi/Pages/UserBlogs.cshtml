@@ -1,8 +1,8 @@
-﻿@page "{username?}"
+﻿@page
 @using Microsoft.AspNetCore.Identity
 @using MiniBlogi.Models;
 @inject UserManager<ApplicationUser> UserManager
-@model MiniBlogi.Pages.Blog.IndexModel
+@model MiniBlogi.Pages.Blog.UserBlogsModel
 @{
 }
 <h2>Blog Posts</h2>
@@ -30,16 +30,12 @@
                     <a asp-page="./Details" asp-route-id="@item.Id">@item.Title</a> |
                 </td>
                 <td>
-                    <a asp-page="/Index" asp-route-username="@item.User.UserName.Substring(0,item.User.UserName.IndexOf('@'))">@item.User.UserName</a>                    |
+                    <a asp-page="./Author" asp-route-id="@item.Id">@item.User.UserName</a> |
                 </td>
                 <td>
-                    @{
-                        var user = await UserManager.GetUserAsync(User);
-
-                        if (UserManager.GetUserId(User) == item.UserId || await UserManager.IsInRoleAsync(user, "Admin"))
-                        {
-                            <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a>   
-                        }
+                    @if (UserManager.GetUserId(User) == item.UserId)
+                    {
+                        <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a>   
                     }
                 </td>
             </tr>
